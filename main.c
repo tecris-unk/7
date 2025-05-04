@@ -24,14 +24,13 @@ int main(void) {
     {
         printf("what would you like to do\n");
         int ch = getch();
-        int currNum;
         switch(ch)
         {
             case '1':
-                pushNode(tree);
+                pushNodeInTree(tree);
                 break;
             case '2':
-                deleteNode(tree);
+                deleteNodeInTree(tree);
                 break;
             case '3':
                 isSearchTree(tree) == 1 ? printf("YES\n") : printf("NO\n");

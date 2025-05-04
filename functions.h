@@ -18,10 +18,10 @@
 void setNumber(int* number);
 BinaryTree* createBinaryTree(int value);
 void showBinaryTree(BinaryTree* tree, int space, int* size);
-void push(BinaryTree* tree, int num, int* currNum, int data, int side);
-void pushNode(BinaryTree* tree);
-void delete(BinaryTree* tree, int num, int* currNum);
-void deleteNode(BinaryTree* tree);
+void pushInTree(BinaryTree* tree, int num, int* currNum, int data, int side);
+void pushNodeInTree(BinaryTree* tree);
+void deleteInTree(BinaryTree* tree, int num, int* currNum);
+void deleteNodeInTree(BinaryTree* tree);
 void showTreeValues(BinaryTree* tree, int space);
 int isSearchTree(BinaryTree* tree);
 #endif //INC_7_FUNCTIONS_H

@@ -92,7 +92,7 @@ void showTreeValues(BinaryTree* tree, int space)
 
     showTreeValues(tree->left, space);
 }
-void pushNode(BinaryTree* tree)
+void pushNodeInTree(BinaryTree* tree)
 {
     int currNum = 0;
     printf("here is your binary tree(nums)\n");
@@ -108,13 +108,13 @@ void pushNode(BinaryTree* tree)
     setNumber(&side);
 
     currNum = 0;
-    push(tree, num, &currNum, data, side);
+    pushInTree(tree, num, &currNum, data, side);
 }
-void push(BinaryTree* tree, int num, int* currNum, int data, int side)
+void pushInTree(BinaryTree* tree, int num, int* currNum, int data, int side)
 {
     if(tree == NULL){return;}
 
-    push(tree->right, num, currNum, data, side);
+    pushInTree(tree->right, num, currNum, data, side);
     (*currNum)++;
     if(num == *currNum){
         if(side == 1){
@@ -125,9 +125,9 @@ void push(BinaryTree* tree, int num, int* currNum, int data, int side)
         }
         return;
     }
-        push(tree->left, num, currNum, data, side);
+        pushInTree(tree->left, num, currNum, data, side);
 }
-void deleteNode(BinaryTree* tree)
+void deleteNodeInTree(BinaryTree* tree)
 {
     int currNum = 0;
     showBinaryTree(tree, 0, &currNum);
@@ -135,13 +135,13 @@ void deleteNode(BinaryTree* tree)
     int num;
     setNumber(&num);
     currNum = 0;
-    delete(tree, num, &currNum);
+    deleteInTree(tree, num, &currNum);
 }
-void delete(BinaryTree* tree, int num, int* currNum)
+void deleteInTree(BinaryTree* tree, int num, int* currNum)
 {
     if(tree == NULL){return;}
 
-    delete(tree->right, num, currNum);
+    deleteInTree(tree->right, num, currNum);
     (*currNum)++;
     if(num == *currNum){
         free(tree->left);
@@ -149,7 +149,7 @@ void delete(BinaryTree* tree, int num, int* currNum)
         tree = NULL;
         return;
     }
-    delete(tree->left, num, currNum);
+    deleteInTree(tree->left, num, currNum);
 }
 int isSearchTree(BinaryTree* tree)
 {
