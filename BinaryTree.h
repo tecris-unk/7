@@ -6,10 +6,11 @@
 #ifndef INC_7_BINARYTREE_H
 #define INC_7_BINARYTREE_H
 
-typedef struct BinaryTree{
+typedef struct Node {
     int value;
-    struct BinaryTree* left;
-    struct BinaryTree* right;
-}BinaryTree;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
 
 #endif //INC_7_BINARYTREE_H

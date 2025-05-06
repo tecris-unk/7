@@ -52,111 +52,224 @@ void setNumber(int* number)
     }while(inputValid == 0);
 }
 
-BinaryTree* createBinaryTree(int value) {
-    BinaryTree *tree = (BinaryTree *) malloc(sizeof(BinaryTree));
-    if (tree == NULL) {
-        printf("malloc failed\n");
-        return NULL;
+Node* createNode(int value)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL){exit(1);}
+    newNode->value = value;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+Node* createRandomBinaryTree()
+{
+    Node *tree;
+    printf("enter how many nodes will be in your binary tree\n");
+    int N;
+    setNumber(&N);
+    tree = generateRandomTree(N);
+}
+Node* generateRandomTree(int n)
+{
+    if(n <= 0) {return NULL;}
+
+
+    srand(time(NULL));
+
+    Node *tree = createNode(rand() % 10);
+    n--;
+
+    if(n == 0){return tree;}
+
+    // массив доступных узлов
+    Node** available = (Node**)malloc(n * sizeof(Node*));
+    int availSize = 0;
+
+    available[availSize++] = tree;
+
+    for (int i = 0; i < n; i++) {
+        int parentIdx = rand() % availSize;
+        Node* parent = available[parentIdx];
+
+        int canLeft = !parent->left;
+        int canRight = !parent->right;
+
+        if(canLeft + canRight == 0){continue;}
+
+        char dir;
+        if(canLeft && canRight) {
+            dir = rand() % 2 ? 'L' : 'R';
+        }
+        else{
+            dir = canLeft ? 'L' : 'R';
+        }
+
+        Node* newNode = createNode(rand() % 100);
+
+        if(dir == 'L') {
+            parent->left = newNode;
+        }
+        else{
+            parent->right = newNode;
+        }
+
+        if(parent->left && parent->right) {
+            available[parentIdx] = available[--availSize];
+        }
+        available[availSize++] = newNode;
     }
-    tree->value = value;
-    tree->left = NULL;
-    tree->right = NULL;
+    free(available);
     return tree;
 }
-void showBinaryTree(BinaryTree* tree, int space, int* size)
+
+void visualizeRecursive(Node* node, const char* prefix, int isLeft, int isLast)
 {
-    if (tree == NULL){return;}
+    if (node == NULL) return;
 
-    space += 5;
-    showBinaryTree(tree->right, space, size);
-    (*size)++;
-    printf("\n");
-    for (int i = 5; i < space; i++)
-        printf(" ");
+    // выводим текущий узел
+    printf("%s", prefix);
+    printf(isLast ? "└── " : "├── ");
+    printf("%d\n", node->value);
 
-    printf("%d\n", *size);
+    // формируем новый префикс
+    char newPrefix[256];
+    snprintf(newPrefix, sizeof(newPrefix), "%s%s    ",
+             prefix, (isLast ? " " : "│   "));
 
-    showBinaryTree(tree->left, space, size);
+    if(node->left){
+        visualizeRecursive(node->left, newPrefix, 1, !node->right);
+    }
+    if(node->right){
+        visualizeRecursive(node->right, newPrefix, 0, 1);
+    }
 }
-void showTreeValues(BinaryTree* tree, int space)
+
+void visualizeTree(Node* root)
 {
-    if (tree == NULL){return;}
-
-    space += 5;
-    showTreeValues(tree->right, space);
-    printf("\n");
-    for (int i = 5; i < space; i++)
-        printf(" ");
-
-    printf("%d\n", tree->value);
-
-    showTreeValues(tree->left, space);
-}
-void pushNodeInTree(BinaryTree* tree)
-{
-    int currNum = 0;
-    printf("here is your binary tree(nums)\n");
-    showBinaryTree(tree, 0, &currNum);
-    printf("Enter value for the new node\n");
-    int data;
-    setNumber(&data);
-    printf("Choose node where you will add new node\n");
-    int num;
-    setNumber(&num);
-    printf("Choose side(LEFT = 1, RIGHT = 2)");
-    int side;
-    setNumber(&side);
-
-    currNum = 0;
-    pushInTree(tree, num, &currNum, data, side);
-}
-void pushInTree(BinaryTree* tree, int num, int* currNum, int data, int side)
-{
-    if(tree == NULL){return;}
-
-    pushInTree(tree->right, num, currNum, data, side);
-    (*currNum)++;
-    if(num == *currNum){
-        if(side == 1){
-            tree->left = createBinaryTree(data);
-        }
-        if(side == 2){
-            tree->right = createBinaryTree(data);
-        }
+    if (root == NULL) {
+        printf("BINARY TREE IS EMPTYYYYYYYYYY!\n");
         return;
     }
-        pushInTree(tree->left, num, currNum, data, side);
-}
-void deleteNodeInTree(BinaryTree* tree)
-{
-    int currNum = 0;
-    showBinaryTree(tree, 0, &currNum);
-    printf("Choose node that you will delete\n");
-    int num;
-    setNumber(&num);
-    currNum = 0;
-    deleteInTree(tree, num, &currNum);
-}
-void deleteInTree(BinaryTree* tree, int num, int* currNum)
-{
-    if(tree == NULL){return;}
 
-    deleteInTree(tree->right, num, currNum);
-    (*currNum)++;
-    if(num == *currNum){
-        free(tree->left);
-        free(tree->right);
-        tree = NULL;
-        return;
+    printf("%d\n", root->value);
+
+    char prefix[256] = "";
+    if (root->right) {
+        visualizeRecursive(root->left, prefix, 1, !root->right);
+        visualizeRecursive(root->right, prefix, 0, 1);
     }
-    deleteInTree(tree->left, num, currNum);
+    else if (root->left) {
+        visualizeRecursive(root->left, prefix, 1, 1);
+    }
 }
-int isSearchTree(BinaryTree* tree)
-{
-    if(tree == NULL){return 1;}
-    if(tree->left != NULL &&
-    (tree->left->value > tree->value || tree->right->value < tree->value)){
+
+int findNodeAndParent(Node* root, int target, Node** result, Node** parent) {
+    if (root == NULL) return 0;
+
+    if (root->value == target) {
+        *result = root;
+        return 1;
+    }
+
+    if (findNodeAndParent(root->left, target, result, parent)) {
+        if (*parent == NULL) *parent = root;
+        return 1;
+    }
+
+    if (findNodeAndParent(root->right, target, result, parent)) {
+        if (*parent == NULL) *parent = root;
+        return 1;
+    }
+
+    return 0;
+}
+
+// Функция для поиска замены
+Node* findReplacement(Node* root) {
+    if (root == NULL) return NULL;
+
+    if (root->right)
+        return findReplacement(root->right);
+    else if (root->left)
+        return findReplacement(root->left);
+    else
+        return root;
+}
+
+Node* deleteNode(Node* root, int value) {
+    if (root == NULL) {return NULL;}
+
+    Node* toDelete = NULL;
+    Node* parent = NULL;
+
+    // Поиск удаляемого узла и его родителя
+    if(root->value == value){
+        toDelete = root;
+    }
+    else{
+        findNodeAndParent(root, value, &toDelete, &parent);
+    }
+
+    if(toDelete == NULL){
+        printf("Node %d not found!\n", value);
+        return root;
+    }
+
+    Node* replacement = findReplacement(toDelete);
+    if (replacement == toDelete) replacement = NULL;
+
+    // Если есть замена - копируем значение
+    if (replacement) {
+        int newValue = replacement->value;
+        root = deleteNode(root, replacement->value);
+        toDelete->value = newValue;
+        return root;
+    }
+
+    // Нет замены - удаляем узел
+    if (parent) {
+        if (parent->left == toDelete)
+            parent->left = NULL;
+        else
+            parent->right = NULL;
+    } else {
+        root = NULL;
+    }
+
+    free(toDelete);
+    return root;
+}
+
+Node* deleteNodeInTree(Node* root) {
+    if (root == NULL) {
+        printf("Tree is empty!\n");
+        return NULL;
+    }
+
+    visualizeTree(root);
+    printf("Enter value to delete: ");
+    int val;
+    setNumber(&val);
+
+    Node* newRoot = deleteNode(root, val);
+    return newRoot;
+}
+
+int isST(Node* node, long min, long max) {
+    if (node == NULL) return 1;
+
+    if (node->value <= min || node->value >= max)
         return 0;
-    }
-    return isSearchTree(tree->left) & isSearchTree(tree->right);
+
+    return isST(node->left, min, node->value) &&
+           isST(node->right, node->value, max);
+}
+
+int isSearchTree(Node* root) {
+    return isST(root, LONG_MIN, LONG_MAX);
+}
+void freeTree(Node* root) {
+    if (!root) return;
+    freeTree(root->left);
+    freeTree(root->right);
+    free(root);
 }

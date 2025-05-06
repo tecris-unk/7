@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <conio.h>
 #include <limits.h>
+#include <time.h>
+#include <Windows.h>
 //#include <string.h>
 //#include <ctype.h>
 
@@ -16,12 +18,16 @@
 
 
 void setNumber(int* number);
-BinaryTree* createBinaryTree(int value);
-void showBinaryTree(BinaryTree* tree, int space, int* size);
-void pushInTree(BinaryTree* tree, int num, int* currNum, int data, int side);
-void pushNodeInTree(BinaryTree* tree);
-void deleteInTree(BinaryTree* tree, int num, int* currNum);
-void deleteNodeInTree(BinaryTree* tree);
-void showTreeValues(BinaryTree* tree, int space);
-int isSearchTree(BinaryTree* tree);
+Node* createNode(int value);
+Node* createRandomBinaryTree();
+Node* generateRandomTree(int n);
+void visualizeRecursive(Node* node, const char* prefix, int isLeft, int isLast);
+void visualizeTree(Node* root);
+int findNodeAndParent(Node* root, int target, Node** result, Node** parent);
+Node* findReplacement(Node* root);
+Node* deleteNode(Node* tree, int value);
+Node* deleteNodeInTree(Node* tree);
+int isST(Node* node, long min, long max);
+int isSearchTree(Node* tree);
+void freeTree(Node* root);
 #endif //INC_7_FUNCTIONS_H

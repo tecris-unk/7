@@ -8,13 +8,11 @@
 #include "functions.h"
 
 int main(void) {
-    printf("enter value for first MAIN node\n");
-    int x;
-    setNumber(&x);
-    BinaryTree *tree = createBinaryTree(x);
+    SetConsoleOutputCP(CP_UTF8);
+    Node *tree;
     // МЕНЮШКА
     printf(
-            "1 - add object in tree\n"
+            "1 - create random tree\n"
             "2 - delete some object in tree\n"
             "3 - find out, it is binary search tree or not\n"
             "4 - show binary tree\n"
@@ -27,19 +25,20 @@ int main(void) {
         switch(ch)
         {
             case '1':
-                pushNodeInTree(tree);
+                tree = createRandomBinaryTree();
                 break;
             case '2':
-                deleteNodeInTree(tree);
+                tree = deleteNodeInTree(tree);
                 break;
             case '3':
                 isSearchTree(tree) == 1 ? printf("YES\n") : printf("NO\n");
                 break;
             case '4':
                 printf("here is your binary tree(values)\n");
-                showTreeValues(tree, 0);
+                visualizeTree(tree);
                 break;
             case '5':
+                freeTree(tree);
                 return 0;
             default:
                 printf("There is no this case, try again\n");
